@@ -1,0 +1,18 @@
+{
+  "name": "pdftodocx",
+  "version": "1.0.0",
+  "description": "for ems ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Om03",
+  "license": "ISC",
+  "dependencies": {
+    "docx": "^7.4.1",
+    "express": "^4.18.1",
+    "moment": "^2.29.4",
+    "pdf-officegen": "^3.0.0",
+    "request": "^2.88.2"
+  }
+}
