@@ -98,9 +98,9 @@ app.post("/", async (req, res) => {
       alt: item.alt,
     };
   });
-
+  res.send("sucess");
   download(imgs);
-  await new Promise((r) => setTimeout(r, 4000));
+  await new Promise((r) => setTimeout(r, 8000));
   console.log("Going");
   const doc = new Document({
     sections: [
@@ -339,7 +339,6 @@ app.post("/", async (req, res) => {
       console.log("Deleted");
     });
   });
-  res.send("sucess");
 });
 
 app.listen(port, () => {
