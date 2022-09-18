@@ -57,8 +57,8 @@ var images = (arr) => {
         new ImageRun({
           data: fs.readFileSync(`./${item.name}`),
           transformation: {
-            width: item.dimensions.width / 3.5,
-            height: item.dimensions.height / 3.5,
+            width: 548.5714285714286,
+            height: 308.57142857142856,
           },
         })
       );
@@ -154,14 +154,8 @@ app.post("/", async (req, res) => {
                 new ImageRun({
                   data: fs.readFileSync(`./${banner}`),
                   transformation: {
-                    width:
-                      imgs[0].dimensions.width / 1.5 < 500
-                        ? imgs[0].dimensions.width / 1.5
-                        : imgs[0].dimensions.width / 3,
-                    height:
-                      imgs[0].dimensions.height / 1.5 < 500
-                        ? imgs[0].dimensions.height / 1.5
-                        : imgs[0].dimensions.height / 3,
+                    width: 488,
+                    height: 469.3333333333333,
                   },
                 }),
               ],
