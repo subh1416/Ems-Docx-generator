@@ -154,8 +154,14 @@ app.post("/", async (req, res) => {
                 new ImageRun({
                   data: fs.readFileSync(`./${banner}`),
                   transformation: {
-                    width: imgs[0].dimensions.width / 1.5,
-                    height: imgs[0].dimensions.height / 1.5,
+                    width:
+                      imgs[0].dimensions.width / 1.5 < 500
+                        ? imgs[0].dimensions.width / 1.5
+                        : imgs[0].dimensions.width / 3,
+                    height:
+                      imgs[0].dimensions.height / 1.5 < 500
+                        ? imgs[0].dimensions.height / 1.5
+                        : imgs[0].dimensions.height / 3,
                   },
                 }),
               ],
