@@ -5,20 +5,15 @@ const port = 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const docx = require("docx");
+var sizeOf = require("image-size");
 const fs = require("fs");
 request = require("request");
 const {
   Document,
-  HorizontalPositionAlign,
-  HorizontalPositionRelativeFrom,
   ImageRun,
-  Media,
   Packer,
   Paragraph,
   TextRun,
-  VerticalPositionAlign,
-  VerticalPositionRelativeFrom,
-  VerticalAlign,
   AlignmentType,
   Run,
   Table,
@@ -42,7 +37,7 @@ var download = function (urls) {
 var split = (data, bool, val) => {
   let ret = [];
   data.split("\n").map((line) => {
-    ret.push(new TextRun({ break: 1, text: line, size: 24 }));
+    ret.push(new TextRun({ text: line, size: 24 }));
     if (bool) {
       ret.push(
         new Run({
@@ -62,8 +57,8 @@ var images = (arr) => {
         new ImageRun({
           data: fs.readFileSync(`./${item.name}`),
           transformation: {
-            width: 500,
-            height: 400,
+            width: item.dimensions.width / 3.5,
+            height: item.dimensions.height / 3.5,
           },
         })
       );
@@ -101,6 +96,10 @@ app.post("/", async (req, res) => {
   res.send("sucess");
   download(imgs);
   await new Promise((r) => setTimeout(r, 8000));
+  imgs.map(({ name }, index) => {
+    var dimensions = sizeOf(name);
+    imgs[index].dimensions = dimensions;
+  });
   console.log("Going");
   const doc = new Document({
     sections: [
@@ -115,6 +114,9 @@ app.post("/", async (req, res) => {
                   height: 100,
                 },
               }),
+              new Run({
+                break: 1,
+              }),
             ],
           }),
           new Paragraph({
@@ -125,7 +127,11 @@ app.post("/", async (req, res) => {
                 underline: true,
                 size: 26,
               }),
+              new Run({
+                break: 1,
+              }),
             ],
+
             alignment: AlignmentType.CENTER,
           }),
           new Paragraph({
@@ -136,6 +142,9 @@ app.post("/", async (req, res) => {
                 underline: true,
                 size: 26,
               }),
+              new Run({
+                break: 1,
+              }),
             ],
             alignment: AlignmentType.CENTER,
           }),
@@ -145,8 +154,8 @@ app.post("/", async (req, res) => {
                 new ImageRun({
                   data: fs.readFileSync(`./${banner}`),
                   transformation: {
-                    width: 500,
-                    height: 400,
+                    width: imgs[0].dimensions.width / 1.5,
+                    height: imgs[0].dimensions.height / 1.5,
                   },
                 }),
               ],
@@ -168,6 +177,7 @@ app.post("/", async (req, res) => {
                 size: 22,
               }),
             ],
+            alignment: AlignmentType.JUSTIFIED,
           }),
           new Paragraph({
             children: [],
@@ -178,6 +188,9 @@ app.post("/", async (req, res) => {
                 text: `${body.data.content.objective.label}`,
                 bold: true,
                 size: 24,
+              }),
+              new Run({
+                break: 1,
               }),
               ...split(body.data.content.objective.data, true, 1),
               ,
@@ -226,7 +239,17 @@ app.post("/", async (req, res) => {
                 bold: true,
                 size: 24,
               }),
-              ...split(body.data.content.rp.data, false, 0),
+            ],
+          }),
+          ...[...split(body.data.content.rp.data, false, 0)].map(
+            (item) =>
+              new Paragraph({
+                children: [item],
+                alignment: AlignmentType.JUSTIFIED,
+              })
+          ),
+          new Paragraph({
+            children: [
               new Run({
                 break: 2,
               }),
@@ -235,12 +258,19 @@ app.post("/", async (req, res) => {
                 bold: true,
                 size: 24,
               }),
+            ],
+          }),
+          ...[...split(body.data.content.kp.data, false, 0)].map(
+            (item) =>
+              new Paragraph({
+                children: [item],
+                alignment: AlignmentType.JUSTIFIED,
+              })
+          ),
+          new Paragraph({
+            children: [
               new Run({
                 break: 1,
-              }),
-              ...split(body.data.content.kp.data, false, 0),
-              new Run({
-                break: 2,
               }),
               new TextRun({
                 text: `${body.data.content.outcomes.label}: `,
