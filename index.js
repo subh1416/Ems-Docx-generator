@@ -104,6 +104,13 @@ app.post("/", async (req, res) => {
   const doc = new Document({
     sections: [
       {
+        properties: {
+          page: {
+            margin: {
+              top: 500,
+            },
+          },
+        },
         children: [
           new Paragraph({
             children: [
