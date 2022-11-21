@@ -1,5 +1,7 @@
 const express = require("express");
 const moment = require("moment");
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 const app = express();
 const port = 3000;
 app.use(express.json());
@@ -21,6 +23,36 @@ const {
   TableCell,
   WidthType,
 } = docx;
+
+const transport = {
+  host: "smtp.gmail.com",
+  secure: true,
+  auth: {
+    user: process.env.USER,
+    pass: process.env.PWD,
+  },
+};
+
+const transporter = nodemailer.createTransport(transport);
+
+const resetPasswordMail = async (req, res) => {
+  console.log(req.body);
+  const mailOptions = {
+    from: "EMS-KJSIEIT <kjsieit.ems@somaiya.edu>",
+    to: `${req.body.email}`,
+    subject: `${req.body.subject}`,
+    html: `${req.body.body}`,
+    replyTo: `${req.body.reply_to}`,
+  };
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log(info.response);
+    res.status(200).json({ done: "ok" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err });
+  }
+};
 
 var download = function (urls) {
   var y = 0;
@@ -72,6 +104,8 @@ var images = (arr) => {
   });
   return ret;
 };
+app.post("/mail", resetPasswordMail);
+
 app.post("/", async (req, res) => {
   const body = req.body;
   var imgs = [];
