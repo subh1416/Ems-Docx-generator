@@ -402,6 +402,19 @@ app.post("/", async (req, res) => {
     "_" +
     body.data.org.trim() +
     ".docx";
+
+  fs.exists(`./documents/${file}`, function (exists) {
+    if (exists) {
+      //Show in green
+      console.log("eeee");
+      fs.unlink(`./documents/${file}`, (err) => {
+        console.log(err);
+      });
+    } else {
+      console.log(exists);
+    }
+  });
+
   Packer.toBuffer(doc).then((buffer) => {
     fs.writeFileSync(`./documents/${file}`, buffer);
   });
