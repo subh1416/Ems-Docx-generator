@@ -9,6 +9,8 @@ app.use(express.urlencoded({ extended: true }));
 const docx = require("docx");
 var sizeOf = require("image-size");
 const fs = require("fs");
+const mongoose = require("mongoose");
+const Logs = require("./logs");
 request = require("request");
 const {
   Document,
@@ -23,6 +25,14 @@ const {
   TableCell,
   WidthType,
 } = docx;
+mongoose.set("strictQuery", false);
+mongoose
+  .connect(process.env.mongo_uri, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+  })
+  .then(() => console.log("connected to database"))
+  .catch((error) => console.log(error));
 
 const transport = {
   host: "smtp.gmail.com",
@@ -104,6 +114,7 @@ var images = (arr) => {
   });
   return ret;
 };
+
 app.post("/mail", resetPasswordMail);
 
 app.post("/", async (req, res) => {
@@ -423,6 +434,27 @@ app.post("/", async (req, res) => {
       console.log("Deleted");
     });
   });
+});
+
+// DB save
+app.post("/savelog", async (req, res) => {
+  try {
+    let log = await Logs.create(req.body);
+    res.status(200).json({ message: "OK", result: log });
+  } catch (err) {
+    res.status(422).send(err);
+    console.log(err);
+  }
+});
+
+app.get("/getlogs", async (_, res) => {
+  try {
+    let logs = await Logs.find({});
+    res.status(200).json({ message: "OK", result: logs });
+  } catch (err) {
+    res.status(422).send(err);
+    console.log(err);
+  }
 });
 
 app.listen(port, () => {
