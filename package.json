@@ -9,6 +9,7 @@
   "author": "Om03",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "docx": "^7.4.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.1",

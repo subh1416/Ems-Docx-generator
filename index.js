@@ -1,9 +1,11 @@
 const express = require("express");
 const moment = require("moment");
 const nodemailer = require("nodemailer");
+const cors = require("cors");
 require("dotenv").config();
 const app = express();
 const port = 3000;
+app.use(cors([]));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const docx = require("docx");
@@ -439,7 +441,20 @@ app.post("/", async (req, res) => {
 // DB save
 app.post("/savelog", async (req, res) => {
   try {
-    let log = await Logs.create(req.body);
+    let log = await Logs.create({
+      useremail: req.body.useremail,
+      ip: req.body.ip,
+      uri:
+        req.body.uri.lastIndexOf("/") != -1
+          ? req.body.uri
+              .substring(req.body.uri.lastIndexOf("/") + 1, req.body.uri.length)
+              .replaceAll(".php", " ")
+              .trim()
+          : req.body.uri.replaceAll(".php", " ").trim(),
+      urioriginal: req.body.uri,
+      agent: req.body.agent,
+      referer: req.body.referer,
+    });
     res.status(200).json({ message: "OK", result: log });
   } catch (err) {
     res.status(422).send(err);
@@ -449,7 +464,10 @@ app.post("/savelog", async (req, res) => {
 
 app.get("/getlogs", async (_, res) => {
   try {
-    let logs = await Logs.find({});
+    let logs = await Logs.find(
+      {},
+      { ip: 0, agent: 0, referer: 0, urioriginal: 0 }
+    );
     res.status(200).json({ message: "OK", result: logs });
   } catch (err) {
     res.status(422).send(err);

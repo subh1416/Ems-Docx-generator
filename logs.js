@@ -10,6 +10,10 @@ const logsSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    urioriginal: {
+      type: String,
+      required: true,
+    },
     uri: {
       type: String,
       required: true,
