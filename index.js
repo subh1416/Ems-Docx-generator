@@ -221,7 +221,7 @@ app.post("/", async (req, res) => {
           new Paragraph({
             children: [
               new TextRun({
-                text: `The ${
+                text: `${
                   body?.data?.org
                 } of K. J. Somaiya Institute of Engineering and Information Technology (KJSIEIT) organized a ${
                   body?.data?.type
