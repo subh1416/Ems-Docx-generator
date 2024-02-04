@@ -14,6 +14,8 @@ const fs = require("fs");
 const mongoose = require("mongoose");
 const Logs = require("./logs");
 request = require("request");
+
+
 const {
   Document,
   ImageRun,
@@ -50,7 +52,7 @@ const transporter = nodemailer.createTransport(transport);
 const resetPasswordMail = async (req, res) => {
   console.log(req.body);
   const mailOptions = {
-    from: "EMS-KJSIEIT <kjsieit.ems@somaiya.edu>",
+    from: "EMS-KJSIEIT <subhadip.s@somaiya.edu>",
     to: `${req.body.email}`,
     subject: `${req.body.subject}`,
     html: `${req.body.body}`,
